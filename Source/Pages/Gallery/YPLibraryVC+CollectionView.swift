@@ -80,23 +80,23 @@ extension YPLibraryVC {
     
     /// Adds cell to selection
 	func addToSelection(indexPath: IndexPath) {
-		if !(delegate?.libraryViewShouldAddToSelection(indexPath: indexPath, numSelections: selection.count) ?? true) {
+		if !(delegate?.libraryViewShouldAddToSelection(indexPath: indexPath, numSelections: selectedItems.count) ?? true) {
 			return
 		}
 
-		let asset = mediaManager.fetchResult[indexPath.item]
+		guard let asset = mediaManager.fetchResult?[indexPath.item] else { return }
 
 		if YPConfig.library.enableSingleMediaSelection {
 			let assetType: PHAssetMediaType = asset.mediaType == .video ? .image : .video
-			if selection.contains(where: { $0.mediaType == assetType }) {
-				let selectedIndexPaths = selection.map { IndexPath(row: $0.index, section: 0) }
-				selection.removeAll()
+			if selectedItems.contains(where: { $0.mediaType == assetType }) {
+				let selectedIndexPaths = selectedItems.map { IndexPath(row: $0.index, section: 0) }
+				selectedItems.removeAll()
 				v.collectionView.reloadItems(at: selectedIndexPaths)
 
 			}
 		}
 
-		selection.append(
+		selectedItems.append(
 			YPLibrarySelection(
 				index: indexPath.row,
 				assetIdentifier: asset.localIdentifier,
