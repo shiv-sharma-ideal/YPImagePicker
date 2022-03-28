@@ -73,7 +73,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 }
                 
                 // The negative index will be corrected in the collectionView:cellForItemAt:
-                return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier)
+				return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier, mediaType: asset.mediaType)
             }
             v.assetViewContainer.setMultipleSelectionMode(on: isMultipleSelectionEnabled)
             v.collectionView.reloadData()
@@ -198,7 +198,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                        cropRect: v.currentCropRect(),
                                        scrollViewContentOffset: v.assetZoomableView.contentOffset,
                                        scrollViewZoomScale: v.assetZoomableView.zoomScale,
-                                       assetIdentifier: asset.localIdentifier)
+									   assetIdentifier: asset.localIdentifier, mediaType: asset.mediaType)
                 ]
             }
         } else {

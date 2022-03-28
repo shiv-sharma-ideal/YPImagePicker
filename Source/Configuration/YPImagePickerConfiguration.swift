@@ -227,6 +227,9 @@ public struct YPConfigLibrary {
     
     /// Set the overlay type shown on top of the selected library item
     public var itemOverlayType: YPItemOverlayType = .grid
+
+	/// Allow selection of only one kind of media with multiple selection
+	public var enableSingleMediaSelection:Bool = false
 }
 
 /// Encapsulates video specific settings.

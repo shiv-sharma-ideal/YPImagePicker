@@ -6,6 +6,7 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
+import Photos
 import UIKit
 
 extension YPLibraryVC {
@@ -78,20 +79,32 @@ extension YPLibraryVC {
     }
     
     /// Adds cell to selection
-    func addToSelection(indexPath: IndexPath) {
-        if !(delegate?.libraryViewShouldAddToSelection(indexPath: indexPath,
-                                                       numSelections: selectedItems.count) ?? true) {
-            return
-        }
-        guard let asset = mediaManager.getAsset(at: indexPath.item) else {
-            print("No asset to add to selection.")
-            return
-        }
+	func addToSelection(indexPath: IndexPath) {
+		if !(delegate?.libraryViewShouldAddToSelection(indexPath: indexPath, numSelections: selection.count) ?? true) {
+			return
+		}
 
-        let newSelection = YPLibrarySelection(index: indexPath.row, assetIdentifier: asset.localIdentifier)
-        selectedItems.append(newSelection)
-        checkLimit()
-    }
+		let asset = mediaManager.fetchResult[indexPath.item]
+
+		if YPConfig.library.enableSingleMediaSelection {
+			let assetType: PHAssetMediaType = asset.mediaType == .video ? .image : .video
+			if selection.contains(where: { $0.mediaType == assetType }) {
+				let selectedIndexPaths = selection.map { IndexPath(row: $0.index, section: 0) }
+				selection.removeAll()
+				v.collectionView.reloadItems(at: selectedIndexPaths)
+
+			}
+		}
+
+		selection.append(
+			YPLibrarySelection(
+				index: indexPath.row,
+				assetIdentifier: asset.localIdentifier,
+				mediaType: asset.mediaType
+			)
+		)
+		checkLimit()
+	}
     
     func isInSelectionPool(indexPath: IndexPath) -> Bool {
         return selectedItems.contains(where: {
@@ -150,7 +163,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                       cropRect: currentSelection.cropRect,
                                                       scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                       scrollViewZoomScale: currentSelection.scrollViewZoomScale,
-                                                      assetIdentifier: currentSelection.assetIdentifier)
+														  assetIdentifier: currentSelection.assetIdentifier,
+														  mediaType: currentSelection.mediaType)
             }
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
         } else {
