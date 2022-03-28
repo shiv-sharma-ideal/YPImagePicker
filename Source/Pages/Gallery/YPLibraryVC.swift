@@ -73,7 +73,10 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 }
                 
                 // The negative index will be corrected in the collectionView:cellForItemAt:
-				return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier, mediaType: asset.mediaType)
+				return YPLibrarySelection(index: -1,
+										  assetIdentifier: asset.localIdentifier,
+										  mediaType: asset.mediaType,
+										  duration: Int(asset.duration * 1000.0))
             }
             v.assetViewContainer.setMultipleSelectionMode(on: isMultipleSelectionEnabled)
             v.collectionView.reloadData()
@@ -193,13 +196,14 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             if needPreselectItemsAndNotSelectedAnyYet,
                shouldSelectByDelegate,
                let asset = mediaManager.getAsset(at: currentlySelectedIndex) {
-                selectedItems = [
-                    YPLibrarySelection(index: currentlySelectedIndex,
-                                       cropRect: v.currentCropRect(),
-                                       scrollViewContentOffset: v.assetZoomableView.contentOffset,
-                                       scrollViewZoomScale: v.assetZoomableView.zoomScale,
-									   assetIdentifier: asset.localIdentifier, mediaType: asset.mediaType)
-                ]
+				selectedItems = [
+					YPLibrarySelection(index: currentlySelectedIndex,
+									   cropRect: v.currentCropRect(),
+									   scrollViewContentOffset: v.assetZoomableView.contentOffset,
+									   scrollViewZoomScale: v.assetZoomableView.zoomScale,
+									   assetIdentifier: asset.localIdentifier,
+									   mediaType: asset.mediaType, duration: Int(asset.duration * 1000.0))
+				]
             }
         } else {
             selectedItems.removeAll()

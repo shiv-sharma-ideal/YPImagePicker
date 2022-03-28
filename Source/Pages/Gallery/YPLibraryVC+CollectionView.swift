@@ -100,7 +100,8 @@ extension YPLibraryVC {
 			YPLibrarySelection(
 				index: indexPath.row,
 				assetIdentifier: asset.localIdentifier,
-				mediaType: asset.mediaType
+				mediaType: asset.mediaType,
+				duration: Int(asset.duration * 1000.0)
 			)
 		)
 		checkLimit()
@@ -164,7 +165,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                       scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                       scrollViewZoomScale: currentSelection.scrollViewZoomScale,
 														  assetIdentifier: currentSelection.assetIdentifier,
-														  mediaType: currentSelection.mediaType)
+														  mediaType: currentSelection.mediaType,
+														  duration: currentSelection.duration)
             }
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
         } else {

@@ -312,20 +312,30 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     
     // When pressing "Next"
     @objc
-    func done() {
-        guard let libraryVC = libraryVC else { ypLog("YPLibraryVC deallocated"); return }
-        
-        if mode == .library {
-            libraryVC.selectedMedia(photoCallback: { photo in
-                self.didSelectItems?([YPMediaItem.photo(p: photo)])
-            }, videoCallback: { video in
-                self.didSelectItems?([YPMediaItem
-                                        .video(v: video)])
-            }, multipleItemsCallback: { items in
-                self.didSelectItems?(items)
-            })
-        }
-    }
+	func done() {
+		guard let libraryVC = libraryVC else { ypLog("YPLibraryVC deallocated"); return }
+		if mode == .library {
+			// Check if video is longer than set time limit
+			if YPConfig.library.maxNumberOfItems > 1 && YPConfig.library.enableSingleMediaSelection {
+				let maxDuration:Int = Int(YPConfig.video.libraryTimeLimit * 1000.0) + 1000
+				let selectedVideoDuration: Int = libraryVC.selectedItems.reduce(0, { $0 + $1.duration })
+				if selectedVideoDuration > maxDuration {
+					let alert = YPAlert.videoTooLongAlert(self.view)
+					self.present(alert, animated: true, completion: nil)
+					return
+				}
+			}
+
+			libraryVC.selectedMedia(photoCallback: { photo in
+				self.didSelectItems?([YPMediaItem.photo(p: photo)])
+			}, videoCallback: { video in
+				self.didSelectItems?([YPMediaItem
+										.video(v: video)])
+			}, multipleItemsCallback: { items in
+				self.didSelectItems?(items)
+			})
+		}
+	}
     
     func stopAll() {
         libraryVC?.v.assetZoomableView.videoView.deallocate()
